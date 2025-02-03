@@ -3,7 +3,9 @@ package main
 import "example/basic"
 
 func main() {
-	basic.CookieExample()
+	// basic.CookieExample()
+
+	basic.SessionCookiefunc()
 
 }
 
