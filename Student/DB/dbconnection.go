@@ -6,9 +6,20 @@ import (
 	"log"
 
 	"github.com/go-sql-driver/mysql"
+
+	_ "github.com/jinzhu/gorm/dialects/mysql"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
+type AdminUser struct {
+	ID       uint   `json:"id" gorm:"primary_key"`
+	Username string `json:"username" gorm:"unique"`
+	Password string `json:"password"`
+}
+
 func Dbconnection() (db *sql.DB) {
+
 	// Capture connection properties.
 	cfg := mysql.Config{
 		User:   "root",
@@ -20,6 +31,7 @@ func Dbconnection() (db *sql.DB) {
 	// Get a database handle.
 	var err error
 	db, err = sql.Open("mysql", cfg.FormatDSN())
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -41,4 +53,5 @@ func Dbconnection() (db *sql.DB) {
 		panic(fmt.Sprintf("Failed to create table: %s", err.Error()))
 	}
 	return db
+
 }

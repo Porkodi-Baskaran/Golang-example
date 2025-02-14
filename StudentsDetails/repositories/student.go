@@ -53,3 +53,19 @@ func DeleteStudent(id int) error {
 	_, err := config.DB.Exec("DELETE FROM student WHERE id = ?", id)
 	return err
 }
+
+func RegisterUser(user models.LoginUser) error {
+
+	query := "INSERT INTO users (username, password) VALUES (?, ?)"
+	_, err := config.DB.Exec(query, user.Username, user.Password)
+	return err
+
+}
+
+// func LoginUser(user models.LoginUser, loginvals models.LoginUser) error {
+// 	query := "SELECT id, username, password FROM users WHERE username = ?"
+// 	row := config.DB.QueryRow(query, loginvals.Username)
+// 	error := row.Scan(&user.UID, &user.Username, &user.Password)
+// 	return error
+
+// }

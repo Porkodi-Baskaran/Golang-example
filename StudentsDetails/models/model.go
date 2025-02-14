@@ -6,3 +6,11 @@ type StudentDetails struct {
 	Class   string `json:"class"`
 	Address string `json:"address"`
 }
+
+type LoginUser struct {
+	UID      uint   `json:"id"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+var Users = []LoginUser{}

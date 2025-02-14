@@ -11,6 +11,10 @@ import (
 )
 
 func GetStudentDetails(c *gin.Context) {
+	c.Header("Access-Control-Allow-Origin", "http://localhost:3000")
+	c.Header("Access-Control-Allow-Headers", "Content-Type")
+	c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+
 	students, err := repositories.GetStudentDetails()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -85,3 +89,53 @@ func DeleteStudent(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"data": "Student deleted successfully"})
 }
+
+// func Register(c *gin.Context) {
+// 	var user models.LoginUser
+// 	if err := c.ShouldBindJSON(&user); err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+// 		return
+// 	}
+// 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+
+// 	fmt.Println(hashedPassword)
+
+// 	if err != nil {
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
+// 		return
+// 	}
+// 	user.Password = string(hashedPassword)
+
+// error := repositories.RegisterUser(user)
+// 	// query := "INSERT INTO users (username, password) VALUES (?, ?)"
+// 	// _, err = DB.Dbconnection().Exec(query, user.Username, user.Password)
+// 	if error != nil {
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
+// 		return
+// 	}
+
+// 	c.JSON(http.StatusOK, user)
+// }
+
+// func Login(c *gin.Context) {
+// 	var user models.LoginUser
+// 	var loginVals models.LoginUser
+// 	if err := c.ShouldBindJSON(&loginVals); err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+// 		return
+// 	}
+// 	// err := repositories.LoginUser(user, loginVals)
+// 	query := "SELECT id, username, password FROM users WHERE username = ?"
+// 	row := config.DB.QueryRow(query, loginVals.Username)
+// 	if err := row.Scan(&user.UID, &user.Username, &user.Password); err != nil {
+// 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid username or password"})
+// 		return
+// 	}
+
+// 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(loginVals.Password)); err != nil {
+// 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid username or password"})
+// 		return
+// 	}
+
+// 	c.JSON(http.StatusOK, gin.H{"message": "Login successful"})
+// }

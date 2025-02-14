@@ -24,6 +24,10 @@ func Dbconnection() {
 	var err error
 	db, err = sql.Open("mysql", cfg.FormatDSN())
 	if err != nil {
+		panic("failed to connect database")
+	}
+
+	if err != nil {
 		log.Fatal(err)
 	}
 
