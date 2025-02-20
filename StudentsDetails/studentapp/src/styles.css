@@ -8,10 +8,6 @@ body {
     padding: 0;
 }
 
-
-
-
- 
 /* Login Page styling */
 .login-container , .register-container {
     max-width: 400px;
@@ -51,19 +47,6 @@ body {
 }
 
 /* Student Table Page styling */
-
-.students-container {
-    padding: 20px;
-  }
-  
-  .student-header {
-    background-color: #247dad;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-
 .student-table-container {
     max-width: 1000px;
     margin: 50px auto;
@@ -120,14 +103,31 @@ body {
     border-radius: 4px;
 }
 
-.student-table-container svg  {
+/* Default color for both buttons */
+.student-table-container svg {
     align-content: center;
     padding-left: 30px;
-    color:#2430ad
+    cursor: pointer; /* Optional: Changes cursor to pointer */
 }
-.student-table-container svg:hover  {
-    color:#d7220a
+
+/* Color for Edit Button */
+.student-table-container .edit-button {
+    color: #2430ad; /* Blue color for edit */
 }
+
+.student-table-container .edit-button:hover {
+    color: #41b408; /* Hover color for edit (red) */
+}
+
+/* Color for Delete Button */
+.student-table-container .delete-button {
+    color: #e74c3c; /* Red color for delete */
+}
+
+.student-table-container .delete-button:hover {
+    color: #c0392b; /* Darker red for delete hover */
+}
+
 
 /*  logout button */
 .logout-button {
@@ -150,5 +150,38 @@ body {
   .logout-button:focus {
     outline: none;   /* Remove focus outline */
   }
-    
+
+  .form-actions {
+    display: flex;
+    gap: 10px;  /* Space between buttons */
+    align-items: center;
+    justify-content: center;
+  }
+
+  .form-button, .cancel-button{
+    margin-bottom: 30px;
+    padding: 10px 20px;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
    
+ .form-button{
+    margin-left: 40 px ;
+    background-color: #4CAF50;
+}
+ .cancel-button{
+    background-color: #c82333;
+}
+
+.form-button :hover{
+    background-color: #45a049;
+}
+ 
+.cancel-button{
+    background-color: #e33f50;
+}
+
+
+

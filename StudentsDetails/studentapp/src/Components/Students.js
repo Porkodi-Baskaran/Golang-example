@@ -12,7 +12,6 @@ const StudentDetails = () => {
     const [editing, setEditing] = useState(false);
     const navigate=useNavigate();
 
-
     useEffect(() => {
     
         fetchStudents();
@@ -49,6 +48,7 @@ const StudentDetails = () => {
         }
     };
     const handleLogout = async () => {
+        console.log("Logout button clicked")
         try {
         const res = await axios.get('http://localhost:8080/api/logout', {
             withCredentials: true // This allows cookies to be sent and received
@@ -61,11 +61,30 @@ const StudentDetails = () => {
     };
 
     const handleCreateOrUpdate = async () => {
+        const studentData = {
+            name: formData.name,
+            class: formData.class,
+            address: formData.address
+          };
+
+        if (!formData.name || !formData.class || !formData.address) {
+        alert('Please fill in all the fields (Name, Class, Address).');
+        return; // Exit the function if validation fails
+        }
+
         if (editing) {
             // Update student
             try {
                 await axios.put(`http://localhost:8080/api/students/${formData.id}`, formData);
                 fetchStudents(); // Refetch students after update
+                console.log("Student details edited successfully. Reset the formData to blank")
+                setEditing(false);
+                setFormData({
+                    id: '',
+                    name: '',
+                    class: '',
+                    address: ''
+                  });
             } catch (error) {
                 console.error("Error updating student", error);
             }
@@ -73,9 +92,16 @@ const StudentDetails = () => {
             console.log("FormData:",formData)
             // Create new student
             try {
-                await axios.post('http://localhost:8080/api/students', formData);
+                await axios.post('http://localhost:8080/api/students', studentData);
                 // formData.name,formData.class,formData.address);
                 fetchStudents(); // Refetch students after creation
+                console.log("new student record created. Reset the formdata to blank")
+                setFormData({
+                    id: '',
+                    name: '',
+                    class: '',
+                    address: ''
+                  });
             } catch (error) {
                 console.error("Error creating student", error);
             }
@@ -98,11 +124,11 @@ const StudentDetails = () => {
     
     return (
         <div class="container">
-              <button class="logout-button" onclick={handleLogout}>Logout</button>
+              <button className ='logout-button' onClick={()=>handleLogout()}> Logout </button>
         <div className='student-table-container'>
             
         
-        <button onClick={() => setShowForm(true)}>New</button>
+        <button onClick={() => setShowForm(true)}>Create New Student</button>
             {showForm && (
                 <div>
                     <h3>{editing ? 'Edit Student' : 'Create New Student'}</h3>
@@ -125,8 +151,10 @@ const StudentDetails = () => {
                             onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                             placeholder="Address"
                         />
-                        <button className='edit-button' type="submit">{editing ? 'Update' : 'Create'}</button>
-                        <button className='delete-button' type="button" onClick={handleCancel}>Cancel</button>
+                        <div className='form-actions'>
+                        <button className='form-button' type="submit">{editing ? 'Update' : 'Create'}</button>
+                        <button className='cancel-button' type="button" onClick={handleCancel}>Cancel</button>
+                        </div>
                     </form>
                 </div>
             )}
@@ -157,7 +185,6 @@ const StudentDetails = () => {
                             role="button"
                             onClick={ () => handleEdit(student)}/>
                             
-
                             <FaTrash 
                             className='delete-button'
                             role="button"
