@@ -1,4 +1,4 @@
-/* styles.css */
+/* styles.css
 
 /* General styling */
 body {
@@ -8,6 +8,10 @@ body {
     padding: 0;
 }
 
+
+
+
+ 
 /* Login Page styling */
 .login-container , .register-container {
     max-width: 400px;
@@ -47,8 +51,21 @@ body {
 }
 
 /* Student Table Page styling */
+
+.students-container {
+    padding: 20px;
+  }
+  
+  .student-header {
+    background-color: #247dad;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
 .student-table-container {
-    max-width: 800px;
+    max-width: 1000px;
     margin: 50px auto;
     padding: 20px;
     background-color: #fff;
@@ -62,7 +79,7 @@ body {
 }
 
 .student-table-container button {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
     padding: 10px 20px;
     background-color: #4CAF50;
     color: white;
@@ -76,7 +93,9 @@ body {
 }
 
 .student-table-container table {
-    width: 100%;
+    width: 100%; /* Increase the table width to 100% */
+    max-width: 1200px; /* Add a maximum width to the table */
+    margin: 0 auto; /* Center the table */
     border-collapse: collapse;
 }
 
@@ -100,3 +119,36 @@ body {
     border: 1px solid #ddd;
     border-radius: 4px;
 }
+
+.student-table-container svg  {
+    align-content: center;
+    padding-left: 30px;
+    color:#2430ad
+}
+.student-table-container svg:hover  {
+    color:#d7220a
+}
+
+/*  logout button */
+.logout-button {
+    position: fixed;  /* Make it fixed at a specific position */
+    top: 60px;        /* Position from the top */
+    right: 20px;      /* Position from the right */
+    background-color: #dc3545;  /* Red background color */
+    color: white;           /* White text */
+    padding: 10px 20px;      /* Padding for button */
+    border: none;           /* Remove border */
+    border-radius: 5px;     /* Rounded corners */
+    font-size: 16px;        /* Text size */
+    cursor: pointer;       /* Pointer cursor on hover */
+  }
+  
+  .logout-button:hover {
+    background-color: #c82333;  /* Darker red on hover */
+  }
+  
+  .logout-button:focus {
+    outline: none;   /* Remove focus outline */
+  }
+    
+   

@@ -2,45 +2,57 @@ import { BrowserRouter as Router, Route, Routes, useNavigate ,useLocation} from 
 import Login from './Components/Login';
 import StudentDetails from './Components/Students';
 import Register from './Components/Register';
+import axios from 'axios';
+import GoogleLogin from '@react-oauth/google'
 
 function App() {
     return (
+        <div>
+        <h1>Student Management Application</h1>
         <Router>
             <Routes>
-                <Route path="/" element={<PageWrapper />} />
-                <Route path="/students" element={<PageWrapper />} />
-                <Route path="/register" element={<PageWrapper />} />
+                <Route path="/" element={<LoginWrapper />} />
+                <Route path="/login" element={<LoginWrapper />} />
+                <Route path="/students" element={<StudentDetails />} />
+                <Route path="/register" element={<Register />} />
             </Routes>
         </Router>
-    );
-}
-
-function PageWrapper() {
-    const location = useLocation();
-    let heading = '';
-
-    if (location.pathname === '/') {
-        heading = 'Login Page';
-    } else if (location.pathname === '/students') {
-        heading = 'Student Details';
-    } else if (location.pathname === '/register') {
-        heading = 'Admin User Registeration';
-    }
-
-    return (
-        <div>
-            <h1>Student Management Application</h1>
-            <h2>{heading}</h2>
-            {location.pathname === '/' ? <LoginWrapper /> : location.pathname === '/students' ? <StudentDetails /> : <Register />}
         </div>
     );
 }
+
+// function PageWrapper() {
+//     const location = useLocation();
+//     let heading = '';
+
+//     if (location.pathname === '/login') {
+//         heading = 'Login Page';
+//     } else if (location.pathname === '/students') {
+//         heading = 'Student Details';
+//     } else if (location.pathname === '/register') {
+//         heading = 'Admin User Registeration';
+//     }else if (location.pathname === '/') {
+//         heading = 'Login Page';
+//     }
+
+//     return (
+//         <div>
+//             <h1>Student Management Application</h1>
+//             <h2>{heading}</h2>
+//             {location.pathname === '/' || '/login' ? <LoginWrapper /> : location.pathname === '/students' ? <StudentDetails /> 
+//             : <Register />}
+
+//         </div>
+//     );
+// }
 
 function LoginWrapper() {
     const navigate = useNavigate();
 
     const handleLoginSuccess = () => {
         navigate('/students');
+        axios.defaults.baseURL = 'http://localhost:8080';
+
     };
 
     return <Login onLogin={handleLoginSuccess} />;

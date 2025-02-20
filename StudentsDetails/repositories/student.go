@@ -5,6 +5,7 @@ import (
 	"errors"
 	config "example/StudentsDetails/Config"
 	"example/StudentsDetails/models"
+	"fmt"
 )
 
 func GetStudentDetails() ([]models.StudentDetails, error) {
@@ -40,6 +41,7 @@ func GetStudentDetailsbyID(id int) (models.StudentDetails, error) {
 }
 
 func CreateStudent(student models.StudentDetails) error {
+	fmt.Println(student)
 	_, err := config.DB.Exec("INSERT INTO student (Name,  Class, Address) VALUES (?, ?, ?)", student.Name, student.Class, student.Address)
 	return err
 }

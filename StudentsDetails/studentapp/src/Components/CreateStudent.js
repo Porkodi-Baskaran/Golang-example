@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 const CreateStudent=()=>{
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const response = await fetch('http://localhost:8080/students', {
+        const response = await fetch('http://localhost:8080/api/students', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id,}),

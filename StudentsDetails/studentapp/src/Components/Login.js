@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useHistory } from 'react-router-dom';
+import axios from 'axios';
 import '../styles.css';
+import GoogleLoginButton from './GoogleLoginButton';
 
 function Login({ onLogin }) {
     const [username, setUsername] = useState('');
@@ -10,24 +12,27 @@ function Login({ onLogin }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const response = await fetch('http://localhost:8080/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password }),
-        });
-
-        if (response.ok) {
-            document.cookie = "token=your-authentication-token; path=/";
-            onLogin(true);
-        } else {
-            alert('Login failed');
+        try {
+            const res = await axios.post('http://localhost:8080/api/login', {
+              username,
+              password
+        }, {
+            withCredentials: true // This allows cookies to be sent and received
+          });
+          if (res.status === 200) {
+            console.log("response:",res.data);
+            navigate('/students');
+          } else {
+            console.error('Login failed:', res.data);
+          }
+        } catch (error) {
+          console.error('Login error:', error);
         }
-    };
+      };
     const handleRegisterRedirect = () => {
         navigate('/register');
     };
-   
-
+    
     return (
         <div className="login-container">
         <form onSubmit={handleSubmit}>
@@ -48,6 +53,9 @@ function Login({ onLogin }) {
                 Register
             </button>
         </form>
+        {/* <hr />
+      <GoogleLoginButton /> */}
+       
         </div>
     );
 }
@@ -55,7 +63,23 @@ function Login({ onLogin }) {
 export default Login;
 
 
+// const handleSubmit = async (e) => {
+    //     e.preventDefault();
+    //     const response = await fetch('http://localhost:8080/api/login', {
+    //         method: 'POST',
+    //         headers: { 'Content-Type': 'application/json' },
+    //         body: JSON.stringify({ username, password }),
+    //     });
+    //     console.log(response)
 
+    //     if (response.ok) {
+    //         document.cookie = "token=your-authentication-token; path=/";
+    //         onLogin(true);
+    //     } else {
+    //         alert('Login failed');
+    //     }
+    // };
+   
 
 
 // import React, { useState } from "react";

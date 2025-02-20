@@ -57,24 +57,29 @@ func CreateStudent(c *gin.Context) {
 }
 
 func UpdateStudent(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
-
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Student ID"})
-		return
-	}
-	var student models.StudentDetails
-	if err := c.ShouldBindJSON(&student); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	// id, err := strconv.Atoi(c.Param("id"))
+	id, _ := strconv.Atoi(c.Param("id"))
+	var updatedStudent models.StudentDetails
+	if err := c.ShouldBindJSON(&updatedStudent); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	student.ID = id
-	if err := repositories.UpdateStudent(student); err != nil {
+	updatedStudent.ID = id
+	if err := repositories.UpdateStudent(updatedStudent); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"data": student})
+	c.JSON(http.StatusOK, gin.H{"data": updatedStudent})
+	// if err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Student ID"})
+	// 	return
+	// }
+	// var student models.StudentDetails
+	// if err := c.ShouldBindJSON(&student); err != nil {
+	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	// 	return
+	// }
 }
 
 func DeleteStudent(c *gin.Context) {
