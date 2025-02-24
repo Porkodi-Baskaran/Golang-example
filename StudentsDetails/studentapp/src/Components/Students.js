@@ -18,6 +18,7 @@ const StudentDetails = () => {
     }, []);
 
     const fetchStudents = async () => {
+        console.log("Student Data Fetching starts here")
         try {
             // axios.defaults.baseURL = 'http://localhost:8080';
             const response = await axios.get("http://localhost:8080/api/students", { withCredentials: true });

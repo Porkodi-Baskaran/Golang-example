@@ -1,9 +1,7 @@
-import { BrowserRouter as Router, Route, Routes, useNavigate ,useLocation} from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import Login from './Components/Login';
 import StudentDetails from './Components/Students';
 import Register from './Components/Register';
-import axios from 'axios';
-import GoogleLogin from '@react-oauth/google'
 
 function App() {
     return (
@@ -11,8 +9,8 @@ function App() {
         <h1>Student Management Application</h1>
         <Router>
             <Routes>
-                <Route path="/" element={<LoginWrapper />} />
-                <Route path="/login" element={<LoginWrapper />} />
+                <Route path="/" element={<Login />} />
+                <Route path="/login" element={<Login />} />
                 <Route path="/students" element={<StudentDetails />} />
                 <Route path="/register" element={<Register />} />
             </Routes>
@@ -20,6 +18,21 @@ function App() {
         </div>
     );
 }
+
+// function LoginWrapper() {
+//     const navigate = useNavigate();
+
+//     const handleLoginSuccess = () => {
+//         navigate('/students');
+//         axios.defaults.baseURL = 'http://localhost:8080';
+
+//     };
+
+//     return <Login onLogin={handleLoginSuccess} />;
+// }
+
+export default App;
+
 
 // function PageWrapper() {
 //     const location = useLocation();
@@ -45,21 +58,6 @@ function App() {
 //         </div>
 //     );
 // }
-
-function LoginWrapper() {
-    const navigate = useNavigate();
-
-    const handleLoginSuccess = () => {
-        navigate('/students');
-        axios.defaults.baseURL = 'http://localhost:8080';
-
-    };
-
-    return <Login onLogin={handleLoginSuccess} />;
-}
-
-export default App;
-
 
 // import React, { useState } from 'react';
 // import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';

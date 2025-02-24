@@ -1,8 +1,11 @@
 package controllers
 
 import (
+	"context"
 	"database/sql"
+	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
 	config "example/StudentsDetails/Config"
@@ -13,16 +16,19 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 )
 
-// var (
-// 	googleOauthConfig = &oauth2.Config{
-// 		RedirectURL:  "http://localhost:8080/api/auth/google/callback",
-// 		ClientID:     "507015603058-e86p59t5irp55eq4f9btgbflg5n4gjfb.apps.googleusercontent.com",
-// 		ClientSecret: "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",
-// 		Endpoint:     google.Endpoint,
-// 	}
-// )
+var (
+	googleOauthConfig = &oauth2.Config{
+		RedirectURL:  "http://localhost:8080/api/auth/google/callback",
+		ClientID:     "507015603058-e86p59t5irp55eq4f9btgbflg5n4gjfb.apps.googleusercontent.com",
+		ClientSecret: "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",
+		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile"},
+		Endpoint:     google.Endpoint,
+	}
+)
 
 type GoogleUser struct {
 	ID    string `json:"id"`
@@ -74,6 +80,7 @@ func Login(c *gin.Context) {
 
 	var storedHashedPassword string
 	result := config.DB.QueryRow("SELECT password FROM users WHERE username = ?", loginDetails.Username)
+	fmt.Println("User Query Result:", result)
 	err := result.Scan(&storedHashedPassword)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -90,7 +97,10 @@ func Login(c *gin.Context) {
 	}
 
 	session := sessions.Default(c)
-	session.Set("user_name", loginDetails.Username)
+	// session.Clear() //Clear any existing session datas
+	// session.Set("user_name", loginDetails.Username)
+	session.Set("user_id", loginDetails.UID)
+	session.Set("auth_method", "password") // Store auth method
 	session.Save()
 
 	fmt.Println("loginDetails.Username:", loginDetails.Username)
@@ -100,9 +110,9 @@ func Login(c *gin.Context) {
 
 func AuthRequired(c *gin.Context) {
 	session := sessions.Default(c)
-	userName := session.Get("user_name")
-	fmt.Println(userName)
-	if userName == nil {
+	userID := session.Get("user_id")
+	fmt.Println("session userId:", userID)
+	if userID == nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
 		c.Abort()
 		return
@@ -118,98 +128,67 @@ func LogoutUser(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Logged out successfully"})
 }
 
-// func generateStateOauthCookie(c *gin.Context) string {
-// 	var expiration = time.Now().Add(365 * 24 * time.Hour)
-// 	state := "random-state-value" // Ideally, generate a unique random value
-// 	cookie := http.Cookie{Name: "oauthstate", Value: state, Expires: expiration}
-// 	http.SetCookie(c.Writer, &cookie)
-// 	return state
-// }
+func HandleGoogleLogin(c *gin.Context) {
+	url := googleOauthConfig.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
+	c.Redirect(http.StatusTemporaryRedirect, url)
+}
 
-// func HandleGoogleLogin(c *gin.Context) {
-// 	state := generateStateOauthCookie(c)
-// 	url := googleOauthConfig.AuthCodeURL(state)
-// 	c.Redirect(http.StatusTemporaryRedirect, url)
-// }
+func HandleGoogleCallback(c *gin.Context) {
+	// Get authorization code from Google
+	code := c.Query("code")
 
-// func HandleGoogleCallback(c *gin.Context) {
-// 	code := c.Query("code")
-// 	fmt.Println("code:", code)
-// 	token, err := googleOauthConfig.Exchange(context.Background(), code)
-// 	fmt.Println("Token:", token)
-// 	if err != nil {
-// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to exchange token"})
-// 		return
-// 	}
+	// Exchange authorization code for an access token
+	token, err := googleOauthConfig.Exchange(context.Background(), code)
 
-// 	resp, err := http.Get(fmt.Sprintf("https://www.googleapis.com/oauth2/v2/userinfo?access_token=%s", token.AccessToken))
-// 	if err != nil {
-// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get user info"})
-// 		return
-// 	}
-// 	defer resp.Body.Close()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to exchange token"})
+		return
+	}
+	// Retrieve user info from Google
+	client := googleOauthConfig.Client(context.Background(), token)
+	resp, err := client.Get("https://www.googleapis.com/oauth2/v2/userinfo")
 
-// 	body, err := ioutil.ReadAll(resp.Body)
-// 	if err != nil {
-// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read user info"})
-// 		return
-// 	}
+	if err != nil {
+		log.Println("Failed to get user info:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get user info"})
+		return
+	}
+	fmt.Println("Response from callback:", resp)
+	defer resp.Body.Close()
 
-// 	var googleUser GoogleUser
-// 	if err := json.Unmarshal(body, &googleUser); err != nil {
-// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to parse user info"})
-// 		return
-// 	}
+	// Decode the response
+	var googleUser struct {
+		ID    string `json:"id"`
+		Email string `json:"email"`
+		Name  string `json:"name"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&googleUser); err != nil {
+		log.Println("Failed to parse user info:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to parse user info"})
+		return
+	}
 
-// 	session := sessions.Default(c)
-// 	session.Set("user_name", googleUser.ID)
-// 	session.Save()
+	// Store user in database if they don't exist
+	var userID int
+	err = config.DB.QueryRow("SELECT id FROM users WHERE username = ?", googleUser.Email).Scan(&userID)
+	if err == sql.ErrNoRows {
+		_, err = config.DB.Exec("INSERT INTO users (username) VALUES (?)", googleUser.Email)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to insert user"})
+			return
+		}
+	}
 
-// 	c.JSON(http.StatusOK, gin.H{"message": "User authenticated with Google", "user_id": googleUser.ID})
-// }
+	// Set session
+	session := sessions.Default(c)
+	// session.Clear()                      //Clear the existing session data if any
+	session.Set("auth_method", "google") // Store auth method
+	// session.Set("email", googleUser.Email)
+	session.Set("user_id", googleUser.ID)
+	session.Save()
 
-// var creds Credentials
-// if err := c.BindJSON(&creds); err != nil {
-// 	c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
-// 	return
-// }
-// var storedHashedPassword string
-// err := config.DB.QueryRow("SELECT password FROM users WHERE username = ?", creds.Username).Scan(&storedHashedPassword)
-// if err != nil {
-// 	if err == sql.ErrNoRows {
-// 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
-// 		return
-// 	}
-// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to query user"})
-// 	return
-// }
+	// Redirect to frontend students page
+	c.Redirect(http.StatusFound, "http://localhost:8080/students")
+	// c.JSON(http.StatusOK, gin.H{"message": "Login successful", "redirectUrl": "http://localhost:8080/students"})
 
-// if bcrypt.CompareHashAndPassword([]byte(storedHashedPassword), []byte(creds.Password)) != nil {
-// 	c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
-// 	return
-// }
-
-// expirationTime := time.Now().Add(5 * time.Minute)
-// claims := &Claims{
-// 	Username: creds.Username,
-// 	StandardClaims: jwt.StandardClaims{
-// 		ExpiresAt: expirationTime.Unix(),
-// 	},
-// }
-
-// token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-// tokenString, err := token.SignedString(jwtKey)
-// fmt.Println("Token", token)
-// fmt.Println("Tokenstring:", tokenString)
-// if err != nil {
-// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
-// 	return
-// }
-
-// http.SetCookie(c.Writer, &http.Cookie{
-// 	Name:    "token",
-// 	Value:   tokenString,
-// 	Expires: expirationTime,
-// })
-
-// c.JSON(http.StatusOK, gin.H{"message": "Login successfully"})
+}

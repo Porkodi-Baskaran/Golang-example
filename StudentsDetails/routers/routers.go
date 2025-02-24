@@ -60,9 +60,9 @@ func SetupRouter() *gin.Engine {
 		//Login & Register User with password hashing
 		studentRoutes.POST("/login", controllers.Login)
 		studentRoutes.POST("/register", controllers.Register)
-		// studentRoutes.GET("/auth/google/login", controllers.HandleGoogleLogin)
+		studentRoutes.GET("/auth/google/login", controllers.HandleGoogleLogin)
 		studentRoutes.GET("/logout", controllers.LogoutUser)
-		// studentRoutes.GET("/auth/google/callback", controllers.HandleGoogleCallback)
+		studentRoutes.GET("/auth/google/callback", controllers.HandleGoogleCallback)
 	}
 
 	return router

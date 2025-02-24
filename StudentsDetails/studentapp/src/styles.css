@@ -6,6 +6,7 @@ body {
     background-color: #f4f4f4;
     margin: 0;
     padding: 0;
+    
 }
 
 /* Login Page styling */
@@ -17,14 +18,15 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     text-align: center;
-}
+    
+} 
 
 .login-container h1,.register-container h1 {
     margin-bottom: 20px;
 }
 
 .login-container input, .register-container input {
-    width: 100%;
+    width: 90%;
     padding: 10px;
     margin: 10px 0;
     border: 1px solid #ddd;
