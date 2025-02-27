@@ -16,8 +16,8 @@ code {
  font-size: 30px;
   width: 100%;
   padding: 0 0.25em;
-  background-color: rgb(26, 26, 171);
-  color: aliceblue;
+  
+  color: rgb(8, 128, 233);
   display: flex;
   justify-content: space-between;
   align-items: center;

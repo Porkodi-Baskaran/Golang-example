@@ -10,6 +10,33 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func GetStudMarks(c *gin.Context) {
+	marks, err := repositories.GetStudentMarks()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": marks})
+}
+func GetStudMarksbyID(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Student ID"})
+		return
+	}
+	marks, err := repositories.GetMarksbyID(id)
+	if err != nil {
+		if err.Error() == "student not found" {
+			fmt.Println(id)
+			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": marks})
+}
+
 func GetStudentDetails(c *gin.Context) {
 	c.Header("Access-Control-Allow-Origin", "http://localhost:3000")
 	c.Header("Access-Control-Allow-Headers", "Content-Type")

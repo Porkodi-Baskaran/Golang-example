@@ -25,6 +25,38 @@ func GetStudentDetails() ([]models.StudentDetails, error) {
 	}
 	return students, nil
 }
+func GetStudentMarks() ([]models.StudMarks, error) {
+	rows, err := config.DB.Query("select * from marks")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	marks := []models.StudMarks{}
+	for rows.Next() {
+		var mark models.StudMarks
+		if err := rows.Scan(&mark.ID, &mark.StudID, &mark.Class, &mark.Maths, &mark.Science,
+			&mark.English, &mark.Tamil, &mark.Socialscience, &mark.PassFail); err != nil {
+			return nil, err
+		}
+		marks = append(marks, mark)
+	}
+	return marks, nil
+}
+
+func GetMarksbyID(id int) (models.StudMarks, error) {
+	var marks models.StudMarks
+	row := config.DB.QueryRow("select * from marks where StudID=?", id)
+	err := row.Scan(&marks.ID, &marks.StudID, &marks.Class, &marks.Maths, &marks.Science,
+		&marks.English, &marks.Tamil, &marks.Socialscience, &marks.PassFail)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return marks, errors.New("data not found")
+		}
+		return marks, err
+	}
+	return marks, nil
+}
 
 func GetStudentDetailsbyID(id int) (models.StudentDetails, error) {
 	var student models.StudentDetails

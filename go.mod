@@ -9,6 +9,7 @@ require (
 	cloud.google.com/go/auth/oauth2adapt v0.2.7 // indirect
 	cloud.google.com/go/compute/metadata v0.6.0 // indirect
 	filippo.io/edwards25519 v1.1.0 // indirect
+	github.com/boombuler/barcode v1.0.1-0.20190219062509-6c824513bacc // indirect
 	github.com/bytedance/sonic v1.12.8 // indirect
 	github.com/bytedance/sonic/loader v0.2.3 // indirect
 	github.com/cheildo/jwt-auth-golang v0.0.0-20230731061522-3d225eaf31e8 // indirect
@@ -56,6 +57,7 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.3 // indirect
+	github.com/pquerna/otp v1.4.0 // indirect
 	github.com/rs/cors v1.11.0 // indirect
 	github.com/rs/cors/wrapper/gin v0.0.0-20240830163046-1084d89a1692 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect

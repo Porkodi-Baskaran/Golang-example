@@ -4,16 +4,20 @@ import { FaEdit } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../styles.css';
+import StudentMarksChart from './StudentChartPage';
 
 const StudentDetails = () => {
     const [students, setStudents] = useState([]);
-    const [showForm, setShowForm] = useState(false);
+    const [showModal, setShowModal] = useState(false);
     const [formData, setFormData] = useState({ id: '', name: '', class: '', address: '' });
     const [editing, setEditing] = useState(false);
+    const [selectedStudent, setSelectedStudent] = useState(null);
+    const [marks, setMarks] = useState(null);
+  const [marksLoading, setMarksLoading] = useState(false);
+  const [showMarksModal, setMarksModal]=useState(false)
     const navigate=useNavigate();
 
     useEffect(() => {
-    
         fetchStudents();
     }, []);
 
@@ -69,69 +73,83 @@ const StudentDetails = () => {
           };
 
         if (!formData.name || !formData.class || !formData.address) {
+            
         alert('Please fill in all the fields (Name, Class, Address).');
         return; // Exit the function if validation fails
         }
-
-        if (editing) {
-            // Update student
-            try {
+        try{
+            if (editing) {
+                // Update student
                 await axios.put(`http://localhost:8080/api/students/${formData.id}`, formData);
-                fetchStudents(); // Refetch students after update
-                console.log("Student details edited successfully. Reset the formData to blank")
-                setEditing(false);
-                setFormData({
-                    id: '',
-                    name: '',
-                    class: '',
-                    address: ''
-                  });
-            } catch (error) {
-                console.error("Error updating student", error);
-            }
-        } else {
-            console.log("FormData:",formData)
-            // Create new student
-            try {
+            } else{
                 await axios.post('http://localhost:8080/api/students', studentData);
-                // formData.name,formData.class,formData.address);
-                fetchStudents(); // Refetch students after creation
-                console.log("new student record created. Reset the formdata to blank")
-                setFormData({
-                    id: '',
-                    name: '',
-                    class: '',
-                    address: ''
-                  });
-            } catch (error) {
-                console.error("Error creating student", error);
             }
+            fetchStudents(); // Refresh student list
+            closeModal();  // Close modal
+        
+        }catch (error) {
+            console.error("Error creating student", error);
         }
-        setShowForm(false); // Hide form after submission
+        
+        setShowModal(false); // Hide form after submission
         setFormData({ id: '', name: '', class: '', address: '' }); // Reset form
     };
 
     const handleEdit = (student) => {
         setFormData(student); // Set form data to current student details
         setEditing(true); // Enable editing mode
-        setShowForm(true); // Show the form
+        setShowModal(true); // Show the modal form
+    };
+
+    const openCreateModal = () => {
+        setFormData({ id: '', name: '', class: '', address: '' });
+        setEditing(false);
+        setShowModal(true);
+    };
+
+    const closeModal = () => {
+        setShowModal(false);
     };
 
     const handleCancel = () => {
-        setShowForm(false); // Hide form without any action
+        setShowModal(false); // Hide form without any action
         setFormData({ id: '', name: '', class: '', address: '' }); // Reset form
         setEditing(false); // Reset to non-editing mode
     };
+    // Fetch marks when a student is clicked
+  const fetchMarks = (student) => {
+    setSelectedStudent(student);
+    setMarksLoading(true);
+    setMarksModal(true)
+    axios
+      .get(`http://localhost:8080/api/marks/${student.id}`) // Fetch marks
+      .then((response) => {
+        setMarks(response.data.data);
+        setMarksLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching marks:", err);
+        setMarks(null);
+        setMarksLoading(false);
+      });
+  };
     
     return (
         <div class="container">
-              <button className ='logout-button' onClick={()=>handleLogout()}> Logout </button>
+        <button className ='logout-button' onClick={()=>handleLogout()}> Logout </button>
+
+        {/* Display Image Outside Table */}
+        {/* <div className="image-container">
+        <img src={studentimage} alt="Background" className="bg-image" />
+        </div> */}
+
         <div className='student-table-container'>
             
-        
-        <button onClick={() => setShowForm(true)}>Create New Student</button>
-            {showForm && (
-                <div>
+    
+        <button onClick= {openCreateModal}>Create New Student</button>
+            {showModal && (
+                <div className='modal'>
+                    <div className='modal-content'>
                     <h3>{editing ? 'Edit Student' : 'Create New Student'}</h3>
                     <form onSubmit={(e) => { e.preventDefault(); handleCreateOrUpdate(); }}>
                         <input
@@ -158,9 +176,10 @@ const StudentDetails = () => {
                         </div>
                     </form>
                 </div>
+                </div>
             )}
 
-            <table  >
+            <table className='table-container' >
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -168,14 +187,16 @@ const StudentDetails = () => {
                         <th>Class</th>
                         <th>Address</th>
                         <th>Actions</th>
-                        
-
                     </tr>
                 </thead> 
                 <tbody>
                     {students.map(student => {
                         return(
-                        <tr key={student.id}>
+                        
+                    <tr key={student.id}
+                    style={{ cursor: "pointer" }}
+                     onClick={() => navigate(`/charts/${student.id}`)}>
+                        
                         <td>{student.id}</td>
                         <td>{student.name}</td> 
                         <td>{student.class}</td>
@@ -195,12 +216,23 @@ const StudentDetails = () => {
                     })}
                 </tbody>      
             </table>
-            
-            
+             {/* Show Pie Chart after fetching marks
+            {showMarksModal &&  (
+            <div>
+              <h2>Marks Distribution for Student ID: {selectedStudent.id}  Name:{selectedStudent.name}</h2>
+              {marksLoading ? (
+                <p>Loading Marks...</p>
+              ) : marks ? (
+                <StudentMarksChart marks={marks} />
+              ) : (
+                <p style={{ color: "red" }}>Failed to load marks</p>
+              )} */}
+            {/* </div>
+          )} */}
+      
         </div>
         </div>
     );
-
 }
 
 

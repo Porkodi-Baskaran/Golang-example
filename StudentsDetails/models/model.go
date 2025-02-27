@@ -14,3 +14,15 @@ type LoginUser struct {
 }
 
 var Users = []LoginUser{}
+
+type StudMarks struct {
+	ID            int    `json:"markid"`
+	StudID        int    `json:"studid"`
+	Class         int    `json:"class"`
+	Maths         int    `json:"maths"`
+	Science       int    `json:"science"`
+	English       int    `json:"english"`
+	Tamil         int    `json:"tamil"`
+	Socialscience int    `json:"socialSci"`
+	PassFail      string `json:"passfail"`
+}

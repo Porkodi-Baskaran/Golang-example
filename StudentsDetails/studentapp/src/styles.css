@@ -8,6 +8,22 @@ body {
     padding: 0;
     
 }
+.login-page{
+        
+        position: absolute;
+        width: 100%;
+        height: 100vh; /* Full viewport height */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: url("C:\Users\dell\OneDrive\Desktop\go\src\example\StudentsDetails\studentapp\src\images\school.jpg") no-repeat center center/cover;
+       
+        z-index: -1; /* Ensure it stays behind */
+      }
+    
+    
+
+
 
 /* Login Page styling */
 .login-container , .register-container {
@@ -18,7 +34,9 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     text-align: center;
-    
+    top:0 px;
+    left:0 px;
+
 } 
 
 .login-container h1,.register-container h1 {
@@ -79,20 +97,23 @@ body {
 
 .student-table-container table {
     width: 100%; /* Increase the table width to 100% */
-    max-width: 1200px; /* Add a maximum width to the table */
-    margin: 0 auto; /* Center the table */
+    max-width: 1200px;
+    margin: 0 auto; 
     border-collapse: collapse;
-}
+ }
 
-.student-table-container th, .student-table-container td {
+ .student-table-container th, .student-table-container td {
     padding: 10px;
     border: 1px solid #ddd;
-    text-align: left;
+    text-align: left; 
 }
 
 .student-table-container th {
     background-color: #f2f2f2;
-}
+} 
+.student-table-container tr:hover {
+  text-decoration: underline;
+} 
 
 .student-table-container form {
     margin-top: 20px;
@@ -133,7 +154,7 @@ body {
 
 /*  logout button */
 .logout-button {
-    position: fixed;  /* Make it fixed at a specific position */
+    position: fixed;  
     top: 60px;        /* Position from the top */
     right: 20px;      /* Position from the right */
     background-color: #dc3545;  /* Red background color */
@@ -153,37 +174,132 @@ body {
     outline: none;   /* Remove focus outline */
   }
 
-  .form-actions {
+ /* Modal Background */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
-    gap: 10px;  /* Space between buttons */
     align-items: center;
     justify-content: center;
   }
-
-  .form-button, .cancel-button{
-    margin-bottom: 30px;
-    padding: 10px 20px;
+  
+  /* Modal Content */
+  .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    position: relative;
+  }
+  
+  /* Fix for form inputs */
+  .modal-content form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+  }
+  
+  /* Fix for input fields */
+  .modal-content input {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%; /* Make sure input takes full width */
+    box-sizing: border-box; /* Ensures padding doesn't affect width */
+  }
+  
+  /* Form Button Container */
+  .form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+  }
+  
+  /* Buttons */
+  .form-button {
+    background: #28a745;
     color: white;
     border: none;
-    border-radius: 4px;
+    padding: 10px 20px;
+    border-radius: 5px;
     cursor: pointer;
+    flex: 1; /* Make buttons expand evenly */
+    max-width: 45%;
   }
+  
+  .cancel-button {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    flex: 1;
+    max-width: 45%;
+  }
+
+  /* .image-container {
+    text-align: center; /* Center the image */
+    /* margin-bottom: 20px; */
+  /* } */
+  
+  /* .student-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px; /* Optional: Add rounded corners */
+    /* box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); */
+  /* } */ 
    
- .form-button{
-    margin-left: 40 px ;
-    background-color: #4CAF50;
-}
- .cancel-button{
-    background-color: #c82333;
-}
+  .table-container {
+    /* position: relative; */
+    width: 100%;
+    padding: 20px;
+  }
+  
+  .table-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("C:\Users\dell\OneDrive\Desktop\go\src\example\StudentsDetails\studentapp\src\images\school.jpg") no-repeat center center/cover;
+    opacity: 0.2; /* Adjust transparency */
+    z-index: -1; /* Ensure it stays behind */
+  }
+  .charts-container {
+    width: 70%;
+    margin: auto;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+  }
+  
+  .back-button {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 15px;
+  }
+  
+  .back-button:hover {
+    background-color: #0056b3;
+  }
+  
 
-.form-button :hover{
-    background-color: #45a049;
-}
- 
-.cancel-button{
-    background-color: #e33f50;
-}
-
-
-
+  
+  

@@ -24,21 +24,6 @@ func SetupRouter() *gin.Engine {
 	fmt.Println(store)
 	router.Use(sessions.Sessions("mysession", store))
 
-	// router.Use(cors.Default())
-
-	// Use CORS middleware
-	// router.Use(cors.New(cors.Config{
-	// 	AllowOrigins:     []string{"http://localhost:3000"},
-	// 	AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-	// 	AllowHeaders:     []string{"Origin", "Content-Type"},
-	// 	ExposeHeaders:    []string{"Content-Length"},
-	// 	AllowCredentials: true,
-	// 	// AllowOriginFunc: func(origin string) bool {
-	// 	// 	return origin == "http://localhost:3000"
-	// 	// },
-	// 	MaxAge: 12 * time.Hour,
-	// }))
-
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:3000"},                                    // Allow your React frontend origin
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", http.MethodHead}, // Allow your desired HTTP methods
@@ -63,15 +48,25 @@ func SetupRouter() *gin.Engine {
 		studentRoutes.GET("/auth/google/login", controllers.HandleGoogleLogin)
 		studentRoutes.GET("/logout", controllers.LogoutUser)
 		studentRoutes.GET("/auth/google/callback", controllers.HandleGoogleCallback)
+		studentRoutes.GET("/marks", controllers.GetStudMarks)
+		studentRoutes.GET("/marks/:id", controllers.GetStudMarksbyID)
+
 	}
 
 	return router
 }
 
-// authorized := studentRoutes.Group("/")
+// router.Use(cors.Default())
 
-// authorized.Use(controllers.AuthMiddleware())
-// {
-// 	authorized.GET("/users", controllers.GetUsers())
-// 	authorized.POST("/users", controllers.CreateUsers())
-// }
+// Use CORS middleware
+// router.Use(cors.New(cors.Config{
+// 	AllowOrigins:     []string{"http://localhost:3000"},
+// 	AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+// 	AllowHeaders:     []string{"Origin", "Content-Type"},
+// 	ExposeHeaders:    []string{"Content-Length"},
+// 	AllowCredentials: true,
+// 	// AllowOriginFunc: func(origin string) bool {
+// 	// 	return origin == "http://localhost:3000"
+// 	// },
+// 	MaxAge: 12 * time.Hour,
+// }))

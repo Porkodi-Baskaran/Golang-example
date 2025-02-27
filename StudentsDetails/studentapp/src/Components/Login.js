@@ -8,15 +8,15 @@ function Login({ onLogin }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
+
     const navigate=useNavigate();
 
     const handleSubmit = async (e) => {
-        console.log("Username")
         e.preventDefault();
 
         if (!username || !password) {
             console.error('Username and password are required');
-            alert("Username and password are required")
+           alert("Username and password are required")
             return;
         }
 
@@ -43,6 +43,7 @@ function Login({ onLogin }) {
     };
     
     return (
+      <div className="login-page">
         <div className="login-container">
         <form onSubmit={handleSubmit} onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}>
             <input
@@ -60,6 +61,7 @@ function Login({ onLogin }) {
                 autoComplete="off"
             />
             <button type="submit">Login</button>
+            
             <button type="button" onClick={handleRegisterRedirect}>
                 Register
             </button>
@@ -69,6 +71,7 @@ function Login({ onLogin }) {
          {/* <GoogleLoginButton /> */}
       <GoogleLoginButton> Sign In With Google </GoogleLoginButton> 
        
+        </div>
         </div>
     );
 }
