@@ -1,21 +1,39 @@
-import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes,Navigate} from 'react-router-dom';
 import Login from './Components/Login';
 import StudentDetails from './Components/Students';
 import Register from './Components/Register';
 import StudentChartsPage from './Components/StudentChartPage';
+import EnableTOTP from './Components/EnableOTP';
 
 function App() {
+    // Check if user is logged in (Modify based on session storage or cookies)
+    const isAuthenticated = !!localStorage.getItem("user_id"); 
     return (
         <div>
         <h1>Student Management Application</h1>
         <Router>
-            <Routes>
-                <Route path="/" element={<Login />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/students" element={<StudentDetails />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/charts/:id" element={<StudentChartsPage />} />
-            </Routes>
+        <Routes>
+                    {/* Public Routes */}
+                    <Route path="/" element={<Login />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/students" element={<StudentDetails />} />
+                    <Route path="/charts/:id"  element={<StudentChartsPage />} />
+                    <Route path="/enable-2fa/:username"  element={<EnableTOTP />} />
+
+                    
+                    {/* <Route  path="/students" 
+                        element={isAuthenticated ? <StudentDetails /> : <Navigate to="/login" />} 
+                    />
+                    <Route 
+                        path="/charts/:id" 
+                        element={isAuthenticated ? <StudentChartsPage /> : <Navigate to="/login" />} 
+                    />
+                    <Route 
+                        path="/enable-2fa" 
+                        element={isAuthenticated ? <EnableTOTP /> : <Navigate to="/login" />} 
+                    /> */}
+                </Routes>
         </Router>
         </div>
     );

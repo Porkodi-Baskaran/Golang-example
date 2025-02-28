@@ -11,6 +11,7 @@ type LoginUser struct {
 	UID      uint   `json:"id"`
 	Username string `json:"username"`
 	Password string `json:"password"`
+	TOTP     string `json:"totp"`
 }
 
 var Users = []LoginUser{}

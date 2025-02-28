@@ -116,23 +116,6 @@ const StudentDetails = () => {
         setFormData({ id: '', name: '', class: '', address: '' }); // Reset form
         setEditing(false); // Reset to non-editing mode
     };
-    // Fetch marks when a student is clicked
-  const fetchMarks = (student) => {
-    setSelectedStudent(student);
-    setMarksLoading(true);
-    setMarksModal(true)
-    axios
-      .get(`http://localhost:8080/api/marks/${student.id}`) // Fetch marks
-      .then((response) => {
-        setMarks(response.data.data);
-        setMarksLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error fetching marks:", err);
-        setMarks(null);
-        setMarksLoading(false);
-      });
-  };
     
     return (
         <div class="container">

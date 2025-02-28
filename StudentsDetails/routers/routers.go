@@ -51,6 +51,9 @@ func SetupRouter() *gin.Engine {
 		studentRoutes.GET("/marks", controllers.GetStudMarks)
 		studentRoutes.GET("/marks/:id", controllers.GetStudMarksbyID)
 
+		// studentRoutes.GET("/enable-2fa/:username", controllers.GenerateTOTPSecret)
+		studentRoutes.POST("/verify-2fa", controllers.VerifyTOTP)
+
 	}
 
 	return router
