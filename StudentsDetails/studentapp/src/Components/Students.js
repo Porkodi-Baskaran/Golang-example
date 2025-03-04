@@ -188,12 +188,16 @@ const StudentDetails = () => {
                             <FaEdit 
                             className='edit-button'
                             role="button"
-                            onClick={ () => handleEdit(student)}/>
+                            onClick={ (e) =>{
+                            e.stopPropagation();
+                             handleEdit(student)}}/>
                             
                             <FaTrash 
                             className='delete-button'
                             role="button"
-                            onClick={()=>{handleDelete(student.id,student.name)}}/> 
+                            onClick={(e)=>{
+                                e.stopPropagation();
+                                handleDelete(student.id,student.name)}}/> 
                         </td>
                         </tr>)             
                     })}
