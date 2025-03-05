@@ -92,6 +92,8 @@ func Register(c *gin.Context) {
 		return
 	}
 
+	fmt.Println("URL:", totpKey.URL())
+
 	// Generate QR Code
 	// qrCode, _ := qrcode.Encode(totpKey.URL(), qrcode.Medium, 256)
 	// qrBase64 := base64.StdEncoding.EncodeToString(qrCode)

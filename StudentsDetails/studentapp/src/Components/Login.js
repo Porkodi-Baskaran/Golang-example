@@ -62,6 +62,7 @@ function Login({ onLogin }) {
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Username"
                 autoComplete="off"
+                required
             />
             <input
                 type="password"
@@ -69,6 +70,7 @@ function Login({ onLogin }) {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
                 autoComplete="off"
+                required
             />
               <div>
                         <label>OTP (Google Authenticator):</label>

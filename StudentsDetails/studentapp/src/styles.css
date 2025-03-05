@@ -26,7 +26,7 @@ body {
 
 
 /* Login Page styling */
-.login-container  {
+.login-container, .register-container  {
     max-width: 400px;
     margin: 50px auto;
     padding: 20px;
@@ -65,33 +65,58 @@ body {
 .login-container button:hover, .register-container button:hover {
     background-color: #45a049;
 }
-.register-container {
+/* .register-container {
   display: flex;
   flex-direction: column;
   width: 300px;
   margin: auto;
-}
+} */
 .input-container {
   position: relative;
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
+  
+
+  width: 90%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
 
 .input-container input {
   width: 100%;
   padding: 10px;
-  padding-right: 40px; /* Space for the eye icon */
+  padding-right: 50px; /* Space for the eye icon */
   border: 1px solid #ccc;
   border-radius: 5px;
+  
 }
 
 .input-container span {
   position: absolute;
-  right: 10px;
+  right: 20px;
   cursor: pointer;
   color: #555;
 }
+
+.qr-container{
+  display: inline-block;
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+.qr-container input {
+  width: 75%;
+  padding: 10px;
+  padding-right: 20px; 
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
 
 /* Student Table Page styling */
 .student-table-container {

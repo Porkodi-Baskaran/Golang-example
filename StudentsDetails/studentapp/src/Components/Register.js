@@ -26,7 +26,8 @@ function Register() {
         try {
           const res = await axios.post('http://localhost:8080/api/register', {
             username,
-            password
+            password,
+            confirmPassword
           });
           console.log(res.data);
           console.log(res.data.message);
@@ -58,13 +59,14 @@ function Register() {
           <h2>Register</h2>
           {error && <p style={{ color: "red" }}>{error}</p>}
             <form onSubmit={handleRegister}>
-                
-                <input
+            <div  className="input-container">
+                <input 
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)} required
                     placeholder="Username"
                 />
+                </div>
                 <div  className="input-container">
                   <input
                     type={showPassword ? "text" : "password"}
@@ -94,10 +96,10 @@ function Register() {
                 <button type="submit">Register</button>
             </form>
             {qrCode && (
-        <div>
+        <div className='qr-container'>
           <h3>Scan QR Code in Google Authenticator</h3>
           <QRCodeCanvas value={qrCode} size={200} />
-          <input type="text" placeholder="Enter OTP" onChange={(e) => setOtp(e.target.value)} />
+          <input className='qr-text' type="text" placeholder="Enter OTP" onChange={(e) => setOtp(e.target.value)} />
           <button onClick={handleVerify}>Verify & Enable 2FA</button>
         </div>
       )}
