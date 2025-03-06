@@ -27,15 +27,11 @@ func Dbconnection() {
 		panic("failed to connect database")
 	}
 
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	pingErr := db.Ping()
 	if pingErr != nil {
 		log.Fatal(pingErr)
 	}
-	fmt.Println("Connected!")
+	fmt.Println("Connected to MySQL Database!")
 	DB = db
 
 	// Create table if it doesn't exist

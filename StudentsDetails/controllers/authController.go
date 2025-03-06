@@ -183,70 +183,13 @@ func Login(c *gin.Context) {
 	// session.Set("user_name", loginDetails.Username)
 	session.Set("user_id", loginDetails.UID)
 	session.Set("user_name", loginDetails.Username)
-	// if storedTOTP != "" {
-	// 	session.Set("auth_method", "totp") // TOTP authenticated
-	// } else {
-	// 	session.Set("auth_method", "password") // Password-only authentication
-	// }
+
 	session.Save()
 
 	fmt.Println("loginDetails.Username:", loginDetails.Username)
 
 	c.JSON(http.StatusOK, gin.H{"message": "Login successfully"})
 }
-
-// func GenerateTOTPSecret(c *gin.Context) {
-// 	username := c.Query("username")
-
-// 	key, err := totp.Generate(totp.GenerateOpts{
-// 		Issuer:      "MyApp",
-// 		AccountName: username,
-// 	})
-// 	if err != nil {
-// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate TOTP secret"})
-// 		return
-// 	}
-
-// 	// Generate QR code
-// 	qrCode, err := qrcode.Encode(key.URL(), qrcode.Medium, 256)
-// 	if err != nil {
-// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate QR code"})
-// 		return
-// 	}
-
-// 	c.JSON(http.StatusOK, gin.H{
-// 		"secret": key.Secret(),
-// 		"qrCode": qrCode,
-// 	})
-// }
-
-// func VerifyTOTP(c *gin.Context) {
-// 	var req struct {
-// 		Username string `json:"username"`
-// 		TOTP     string `json:"totp"`
-// 		Secret   string `json:"secret"`
-// 	}
-
-// 	if err := c.ShouldBindJSON(&req); err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
-// 		return
-// 	}
-
-// 	// Verify OTP
-// 	if !totp.Validate(req.TOTP, req.Secret) {
-// 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid OTP"})
-// 		return
-// 	}
-
-// 	// Save TOTP secret in database
-// 	_, err := config.DB.Exec("UPDATE users SET totp_secret = ? WHERE username = ?", req.Secret, req.Username)
-// 	if err != nil {
-// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save TOTP secret"})
-// 		return
-// 	}
-
-// 	c.JSON(http.StatusOK, gin.H{"message": "TOTP enabled successfully"})
-// }
 
 func AuthRequired(c *gin.Context) {
 	session := sessions.Default(c)
