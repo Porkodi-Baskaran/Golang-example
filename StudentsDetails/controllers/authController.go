@@ -8,14 +8,16 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	config "example/StudentsDetails/Config"
 
 	"example/StudentsDetails/models"
 
-	"github.com/dgrijalva/jwt-go"
+	// "github.com/dgrijalva/jwt-go"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/pquerna/otp/totp"
 	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/oauth2"
@@ -44,9 +46,15 @@ type Credentials struct {
 	ConfirmPassword string `json:"confirmPassword"`
 }
 
+const jwtSecret = "secret_key_aishu"
+
 type Claims struct {
 	Username string `json:"username"`
-	jwt.StandardClaims
+	jwt.RegisteredClaims
+}
+type User struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 func Register(c *gin.Context) {
@@ -178,6 +186,19 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid OTP"})
 		return
 	}
+
+	//JWT token implementation
+	// token := jwt.NewWithClaims(jwt.SigningMethodHS256,
+	// 	jwt.MapClaims{
+	// 		"username": loginDetails.Username,
+	// 		"exp":      time.Now().Add(time.Hour * 24).Unix(),
+	// 	})
+	// tokenString, err := token.SignedString(jwtSecret)
+
+	// if err != nil {
+	// 	fmt.Println("Error occur while implementing JWT ")
+	// }
+
 	session := sessions.Default(c)
 	// session.Clear() //Clear any existing session datas
 	// session.Set("user_name", loginDetails.Username)
@@ -189,6 +210,85 @@ func Login(c *gin.Context) {
 	fmt.Println("loginDetails.Username:", loginDetails.Username)
 
 	c.JSON(http.StatusOK, gin.H{"message": "Login successfully"})
+}
+
+func JwtLogin(c *gin.Context) {
+	var loginDetails models.LoginUser
+
+	if err := c.ShouldBindJSON(&loginDetails); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON"})
+		return
+	}
+	const LoginUsername = "nn"
+	var storedHashedPassword, storedTOTP string
+	result := config.DB.QueryRow("SELECT password,totp_secret FROM users WHERE username =?", LoginUsername)
+	err := result.Scan(&storedHashedPassword, &storedTOTP)
+	fmt.Println("User Query Result:", result)
+	// err := result.Scan(&storedHashedPassword, &storedTOTPSecret)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to query user"})
+		return
+	}
+
+	// if bcrypt.CompareHashAndPassword([]byte(storedHashedPassword), []byte(loginDetails.Password)) != nil {
+	// 	c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+	// 	return
+	// }
+
+	// Verify OTP
+	// valid := totp.Validate(loginDetails.TOTP, storedTOTP)
+	// if !valid {
+	// 	c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid OTP"})
+	// 	return
+	// }
+
+	expirationTime := time.Now().Add(time.Hour * 1)
+	claims := &Claims{
+		Username: loginDetails.Username,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(expirationTime),
+		},
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, _ := token.SignedString([]byte(jwtSecret))
+
+	c.JSON(http.StatusOK, gin.H{"message": "Login successful", "token": tokenString})
+}
+
+func JwtAuthMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		tokenString := c.GetHeader("Authorization")
+		if tokenString == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token required"})
+			c.Abort()
+			return
+		}
+		fmt.Println("TokenString:", tokenString)
+		// Remove "Bearer " prefix if present
+		if len(tokenString) > 7 && tokenString[:7] == "Bearer " {
+			tokenString = tokenString[7:]
+		}
+
+		claims := &Claims{}
+		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+			return []byte(jwtSecret), nil
+		})
+		fmt.Println("Token:", token)
+
+		if err != nil || !token.Valid {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+			c.Abort()
+			return
+		}
+
+		// Store username from token in context
+		c.Set("username", "nn")
+		c.Next()
+	}
 }
 
 func AuthRequired(c *gin.Context) {

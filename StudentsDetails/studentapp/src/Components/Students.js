@@ -22,7 +22,22 @@ const StudentDetails = () => {
     }, []);
 
     const fetchStudents = async () => {
-        console.log("Student Data Fetching starts here")
+        const token = localStorage.getItem("token");
+        console.log("Token:",token)
+
+        if (token){  
+            try{  
+                const response= await axios.get("http://localhost:8080/api/students", {
+                    headers: { Authorization: `Bearer ${token}` }, // Attach token
+                });
+                console.log("Response:",response)
+                setStudents(response.data.data);
+                }catch (error){
+                    console.error("Error fetching students:", error);
+                    navigate('/login')
+                }
+            }
+        else
         try {
             // axios.defaults.baseURL = 'http://localhost:8080';
             const response = await axios.get("http://localhost:8080/api/students", { withCredentials: true });

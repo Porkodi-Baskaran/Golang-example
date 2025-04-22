@@ -4,6 +4,7 @@ import StudentDetails from './Components/Students';
 import Register from './Components/Register';
 import StudentChartsPage from './Components/StudentChartPage';
 import EnableTOTP from './Components/EnableOTP';
+import LoginJWT from './Components/LoginJWT';
 
 function App() {
     // Check if user is logged in (Modify based on session storage or cookies)
@@ -16,6 +17,7 @@ function App() {
                     {/* Public Routes */}
                     <Route path="/" element={<Login />} />
                     <Route path="/login" element={<Login />} />
+                    <Route path="/JWTlogin" element={<LoginJWT />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/students" element={<StudentDetails />} />
                     <Route path="/charts/:id"  element={<StudentChartsPage />} />

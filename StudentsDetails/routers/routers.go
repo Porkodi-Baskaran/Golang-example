@@ -55,6 +55,15 @@ func SetupRouter() *gin.Engine {
 		studentRoutes.POST("/verify-2fa", controllers.VerifyTOTP)
 
 	}
+	studentJwtRoutes := router.Group("/api/jwt")
+	{
+		studentJwtRoutes.POST("/jwt-login", controllers.JwtLogin)
+		studentJwtRoutes.GET("/protected", controllers.JwtAuthMiddleware(), func(c *gin.Context) {
+			username, _ := c.Get("username")
+			c.JSON(http.StatusOK, gin.H{"message": "Access granted", "username": username})
+		})
+
+	}
 
 	return router
 }
